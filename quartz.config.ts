@@ -16,16 +16,7 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "zh-CN",
-    text: {
-      'Search': '搜索',
-      'Explorer': '文件浏览器',
-      'Table of Contents': '目录',
-      'Backlinks': '反向链接',
-      'Recent Files': '最近文件',
-      'No search results for': '没有找到关于',
-      'in this file': '在这个文件中',
-    },
-    baseUrl: "quartz.jzhao.xyz",
+    baseUrl: "my-page",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
