@@ -38,7 +38,22 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      sortFn: (a, b) => {
+        // 1. 优先将文件夹（Folder）排在文件（File）前面
+        if ((!a.file && b.file) || (a.file && !b.file)) {
+          return !a.file ? -1 : 1
+        }
+        
+        // 2. 按创建日期倒序 (最新的日期 - 最旧的日期)
+        // 使用 new Date(0) 作为默认值，以防止缺少日期时报错
+        const dateA = a.file?.dates?.created ?? new Date(0)
+        const dateB = b.file?.dates?.created ?? new Date(0)
+        
+        // 如果 dateB > dateA，结果为正数，则 b 排在 a 前面 (倒序/降序)
+        return dateB.getTime() - dateA.getTime()
+      },
+    }),
   ],
   right: [
     Component.Graph(),
