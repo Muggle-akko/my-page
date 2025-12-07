@@ -40,18 +40,24 @@ export const defaultContentPageLayout: PageLayout = {
     }),
     Component.Explorer({
       sortFn: (a, b) => {
-        // 1. 优先将文件夹（Folder）排在文件（File）前面
-        if ((!a.file && b.file) || (a.file && !b.file)) {
-          return !a.file ? -1 : 1
-        }
-        
-        // 2. 按创建日期倒序 (最新的日期 - 最旧的日期)
-        // 使用 new Date(0) 作为默认值，以防止缺少日期时报错
-        const dateA = a.file?.dates?.created ?? new Date(0)
-        const dateB = b.file?.dates?.created ?? new Date(0)
-        
-        // 如果 dateB > dateA，结果为正数，则 b 排在 a 前面 (倒序/降序)
-        return dateB.getTime() - dateA.getTime()
+        // 强制转换为 any 来处理 TypeScript 报错，因为文档确认 file 属性存在于 FileNode
+        const nodeA = a as any
+        const nodeB = b as any
+    
+        // 1. 优先将文件夹排在文件前面 (基于是否有 file 属性)
+        const isAFolder = !nodeA.file
+        const isBFolder = !nodeB.file
+    
+        if (isAFolder && !isBFolder) return -1 // A 是文件夹，A 在前
+        if (!isAFolder && isBFolder) return 1  // B 是文件夹，B 在前
+    
+        // 2. 如果两者都是文件夹或都是文件，则按创建日期倒序 (最新的在前)
+        // 从 node.file.dates.created 中获取日期，使用 new Date(0) (1970年) 作为默认值
+        const dateA = nodeA.file?.dates?.created ?? new Date(0)
+        const dateB = nodeB.file?.dates?.created ?? new Date(0)
+    
+        // dateB.getTime() - dateA.getTime() => 实现倒序 (Descending)
+        return new Date(dateB).getTime() - new Date(dateA).getTime()
       },
     }),
   ],
